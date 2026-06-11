@@ -1,0 +1,62 @@
+---
+title: "Luka Saxena"
+image: profile.jpg
+about:
+  template: trestles
+  image-shape: round
+  image-width: 12em
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/luka-saxena
+    - icon: file-earmark-text
+      text: Resume
+      href: resume.pdf
+    - text: ORCiD
+      href: https://orcid.org/0009-0004-8474-6383
+toc: false
+---
+
+```{r}
+#| echo: false
+#| fig-width: 15
+#| fig-height: 20
+#| fig-align: center
+
+library(ggplot2)
+
+library(ggplot2)
+
+hobbies <- data.frame(
+  label  = c("skiing", "gym", "soccer", "diy", "dogs & cats",
+             "9-5 beach in summer", "airshow enthusiast",
+             "chronically on reels", "random outdoor adventures"),
+  y      = c(9, 8, 7, 6, 5, 4, 3, 2, 1),
+  fill   = c("#1a3a3a", "#1e1a3a", "#1a3a3a", "#1e1a3a", "#1a3a3a",
+             "#1e1a3a", "#1a3a3a", "#1e1a3a", "#1a3a3a"),
+  accent = c("#39d0d8", "#7c6af7", "#39d0d8", "#7c6af7", "#39d0d8",
+             "#7c6af7", "#39d0d8", "#7c6af7", "#39d0d8")
+)
+
+ggplot(hobbies, aes(x = 0, y = y)) +
+  geom_tile(aes(fill = fill), width = 2, height = 0.82,
+            colour = "#30363d", linewidth = 0.5) +
+  geom_text(aes(label = label, colour = accent),
+            hjust = 0.5, size = 10, fontface = "bold", family = "mono") +
+  scale_fill_identity() +
+  scale_colour_identity() +
+  scale_y_continuous(limits = c(0.4, 9.6)) +
+  scale_x_continuous(limits = c(-1.2, 1.2)) +
+  labs(title = "When I'm not held captive to my screen...") +
+  theme_void() +
+  theme(
+    plot.background  = element_rect(fill = "#0d1117", colour = NA),
+    panel.background = element_rect(fill = "#0d1117", colour = NA),
+    plot.title = element_text(
+      family = "mono", colour = "#e6edf3", size = 40,
+      hjust = 0.5, margin = margin(b = 20)
+    ),
+    plot.margin = margin(30, 40, 30, 40)
+  )
+
+```

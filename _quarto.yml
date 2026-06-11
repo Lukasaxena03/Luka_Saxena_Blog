@@ -1,0 +1,33 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  description: "Welcome to my website!"
+  site-url: https://your-website-url.example.com # you must change this appropriately for RSS feeds to work properly
+  title: "Luka Saxena"
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+    right:
+      - text: "Blog"
+        href: blog.qmd
+      - text: "About"
+        href: about.qmd
+      - icon: ORCiD
+        href: https://orcid.org/my-orcid?orcid=0009-0004-8474-6383
+        aria-label: ORCiD
+      - icon: linkedin
+        href: https://www.linkedin.com/in/luka-saxena
+        aria-label: LinkedIn
+
+format:
+  html:
+    theme: darkly
+    css: styles.css
+    toc: false
+    link-external-newwindow: true
+
+editor: visual
+
