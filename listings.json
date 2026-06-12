@@ -2,13 +2,15 @@
   {
     "listing": "/blog.html",
     "items": [
-      "/posts/welcome/index.html"
+      "/posts/PRISMA/index.html",
+      "/posts/Welcome/index.html"
     ]
   },
   {
     "listing": "/index.html",
     "items": [
-      "/posts/welcome/index.html"
+      "/posts/PRISMA/index.html",
+      "/posts/Welcome/index.html"
     ]
   }
 ]
