@@ -1,0 +1,73 @@
+/* css styles */
+/*-- fonts --*/
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;600&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #0d1117;
+  color: #e6edf3;
+}
+
+code, pre, .sourceCode {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/*-- accent colour -- cyan --*/
+a, a:hover {
+  color: #39d0d8;
+}
+
+h1, h2, h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+}
+
+/*-- navbar --*/
+.navbar {
+  background-color: #161b22 !important;
+  border-bottom: 1px solid #30363d;
+}
+
+.navbar-brand, .nav-link {
+  color: #e6edf3 !important;
+}
+
+.nav-link:hover {
+  color: #39d0d8 !important;
+}
+
+/*-- buttons --*/
+.btn-primary {
+  background-color: #39d0d8;
+  border-color: #39d0d8;
+  color: #0d1117;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.btn-primary:hover {
+  background-color: #2bb8bf;
+  border-color: #2bb8bf;
+  color: #0d1117;
+}
+
+.btn-outline-secondary {
+  border-color: #39d0d8;
+  color: #39d0d8;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #39d0d8;
+  color: #0d1117;
+}
+
+/*-- cards / post listing --*/
+.card {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+}
+
+.card:hover {
+  border-color: #39d0d8;
+  transition: border-color 0.2s ease;
+}
