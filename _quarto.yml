@@ -4,7 +4,7 @@ project:
 
 website:
   description: "Welcome to my website!"
-  site-url: https://your-website-url.example.com # you must change this appropriately for RSS feeds to work properly
+  site-url: https://lukasaxena03.github.io/Luka_Saxena_Blog/
   title: "Luka Saxena"
   navbar:
     left:

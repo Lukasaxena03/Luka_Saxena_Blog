@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://your-website-url.example.com/blog.html</loc>
-    <lastmod>2026-06-09T06:02:15.710Z</lastmod>
+    <loc>https://lukasaxena03.github.io/Luka_Saxena_Blog/blog.html</loc>
+    <lastmod>2026-06-12T09:21:28.094Z</lastmod>
   </url>
   <url>
-    <loc>https://your-website-url.example.com/index.html</loc>
-    <lastmod>2026-06-11T09:15:15.607Z</lastmod>
+    <loc>https://lukasaxena03.github.io/Luka_Saxena_Blog/index.html</loc>
+    <lastmod>2026-06-12T09:21:28.537Z</lastmod>
   </url>
   <url>
-    <loc>https://your-website-url.example.com/posts/post-with-code/index.html</loc>
-    <lastmod>2026-06-09T05:28:45.505Z</lastmod>
+    <loc>https://lukasaxena03.github.io/Luka_Saxena_Blog/posts/welcome/index.html</loc>
+    <lastmod>2026-06-12T09:51:50.426Z</lastmod>
   </url>
   <url>
-    <loc>https://your-website-url.example.com/posts/welcome/index.html</loc>
-    <lastmod>2026-06-09T05:28:45.504Z</lastmod>
-  </url>
-  <url>
-    <loc>https://your-website-url.example.com/about.html</loc>
-    <lastmod>2026-06-09T08:35:01.615Z</lastmod>
+    <loc>https://lukasaxena03.github.io/Luka_Saxena_Blog/about.html</loc>
+    <lastmod>2026-06-12T09:21:27.656Z</lastmod>
   </url>
 </urlset>
