@@ -7,10 +7,9 @@ website:
   site-url: https://lukasaxena03.github.io/Luka_Saxena_Blog/
   title: "Luka Saxena"
   navbar:
-    left:
-      - text: "Home"
-        href: index.qmd
     right:
+      - text: "Home"
+        href: index.qmd    
       - text: "Blog"
         href: blog.qmd
       - text: "About"

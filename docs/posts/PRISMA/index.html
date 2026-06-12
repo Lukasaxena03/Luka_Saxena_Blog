@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Luka Saxena">
+<meta name="dcterms.date" content="2026-06-12">
 
-<title>Blog – Luka Saxena</title>
+<title>PRISMA2020 on R – Luka Saxena</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,25 +28,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-4360c678b5099ca041644eb02eaa1bfe.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-4360c678b5099ca041644eb02eaa1bfe.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,77 +72,19 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Luka Saxena</span>
     </a>
   </div>
@@ -153,15 +95,15 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./blog.html" aria-current="page"> 
+    <a class="nav-link" href="../../blog.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -184,101 +126,102 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Blog</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">PRISMA2020 on R</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">code</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Luka Saxena </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 12, 2026</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Y29kZQ==">code <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bmV3cw==">news <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
+<section id="drawing-a-prisma-2020-flow-diagram-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="drawing-a-prisma-2020-flow-diagram-in-r">Drawing a PRISMA 2020 flow diagram in R</h2>
+<p>If you have ever put together a systematic review, you will know the PRISMA flow diagram: that box-and-arrow chart showing how many records you found, screened, excluded, and finally included. For a long time I thought you could only manually build this in word or canva, nudging boxes around and re-typing numbers every time a count changed. It worked, but it was fiddly and very easy to get wrong.</p>
+<p>Then I found the <code>PRISMA2020</code> R package, and it changed how I do this completely. Here is how I got it working, including where to find the template and the actual code I used.</p>
+<section id="what-the-package-does" class="level3">
+<h3 class="anchored" data-anchor-id="what-the-package-does">What the package does</h3>
+<p><code>PRISMA2020</code> was built by Haddaway and colleagues to produce flow diagrams that follow the PRISMA 2020 standard. You fill in a simple CSV with your record counts, point R at it, and the package draws the whole diagram for you. You can output a static image, or an interactive HTML version where each box carries a tooltip or a hyperlink.</p>
+</section>
+<section id="step-1-get-the-package-and-the-csv-template" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-get-the-package-and-the-csv-template">Step 1: get the package and the CSV template</h3>
+<p>Install it from CRAN:</p>
+<pre><code>install.packages("PRISMA2020")
+library(PRISMA2020)</code></pre>
+<p>To locate the bundled template and see where it lives on your machine:</p>
+<pre><code>csvFile &lt;- system.file("extdata", "PRISMA.csv", package = "PRISMA2020")
+csvFile   # prints the full path so you can open and copy it</code></pre>
+<p>Open that file, save a copy into your project, and fill in your own numbers.</p>
+</section>
+<section id="step-2-fill-in-your-counts" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-fill-in-your-counts">Step 2: fill in your counts</h3>
+<p>The template is one row of data with a column for each number the diagram needs: records from databases and registers, records from other sources such as citation searching and websites, duplicates removed, records screened and excluded, reports sought and not retrieved, and so on.</p>
+<p>For my review the records came in from seven different sources, so I made sure each one landed in the right column before reading the file back into R.</p>
+</section>
+<section id="step-3-the-code-i-used" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-the-code-i-used">Step 3: the code I used</h3>
+<p>Once the CSV was filled in, the rest was short:</p>
+<pre><code># Read in my filled-in template
+data &lt;- read.csv("data/prisma.csv")
+
+# Convert it into the structure the package expects
+data &lt;- PRISMA_data(data)
+
+# Build the diagram
+plot &lt;- PRISMA_flowdiagram(
+  data,
+  fontsize    = 12,
+  interactive = FALSE,   # set TRUE for an interactive HTML version
+  previous    = FALSE,   # I had no previous-version arm
+  other       = TRUE     # I did have "other" sources, so keep this on
+)
+
+plot
+
+PRISMA_save(plot, filename = "prisma_flowdiagram.png", filetype = "PNG")</code></pre>
+<p>Two arguments are worth knowing, because they caught me out at first. <code>previous</code> controls the left-hand arm for studies carried over from an earlier version of the review, and <code>other</code> controls the arm for records found through methods other than database searching. If your diagram looks off or has empty boxes, these two toggles are usually the culprit.</p>
+</section>
+<section id="the-result" class="level3">
+<h3 class="anchored" data-anchor-id="the-result">The result</h3>
+<p>Here is the finished diagram for my review:</p>
+<p><img src="prisma.png" class="img-fluid"></p>
 
 
+</section>
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Y29kZQ==" data-listing-date-sort="1781186400000" data-listing-file-modified-sort="1781260573059" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="499">
-<div class="thumbnail"><a href="./posts/PRISMA/index.html" class="no-external">
-
-<img loading="lazy" src="./posts/PRISMA/prisma.png" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/PRISMA/index.html" class="no-external">PRISMA2020 on R</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Y29kZQ=='); return false;">code</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/PRISMA/index.html" class="no-external">
-If you have ever put together a systematic review, you will know the PRISMA flow diagram: that box-and-arrow chart showing how many records you found, screened, excluded…
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/PRISMA/index.html" class="no-external">
-<div class="listing-date">
-Jun 12, 2026
-</div>
-<div class="listing-author">
-Luka Saxena
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="bmV3cw==" data-listing-date-sort="1781186400000" data-listing-file-modified-sort="1781260601622" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="252">
-<div class="thumbnail"><a href="./posts/Welcome/index.html" class="no-external">
-
-<img loading="lazy" src="./posts/Welcome/thumbnail.jpg" class="thumbnail-image">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/Welcome/index.html" class="no-external">Welcome To My Blog</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('bmV3cw=='); return false;">news</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/Welcome/index.html" class="no-external">
-Hi, I’m Luka. Thanks for stopping by. This is a small corner of the internet where I plan to think out loud about working with data. I’ve started it for a simple reason: I’m…
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/Welcome/index.html" class="no-external">
-<div class="listing-date">
-Jun 12, 2026
-</div>
-<div class="listing-author">
-Luka Saxena
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

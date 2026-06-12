@@ -10,7 +10,7 @@ image: "thumbnail.jpg"
 
 Hi, I'm Luka. Thanks for stopping by. This is a small corner of the internet where I plan to think out loud about working with data. I've started it for a simple reason: I'm learning a lot right now, and I wanted somewhere to keep track of it all, share the good bits, and look back later on how far I've come.
 
-By day I work in health and medical research, and on the side I'm studying health data science. Most of my hours go into wrangling messy data, picking up new tools, and trying to turn raw numbers into something clear and, on a good day, genuinely beautiful. This blog is where I'll share that journey as it actually unfolds: the things I'm learning, the problems I get stuck on, and the small wins that make everything click into place.
+By day I work in health and medical research, and on the side I'm studying health data science. This blog is where I'll share my journey as it actually unfolds: the things I'm learning, the problems I get stuck on, and the small wins that make everything click into place.
 
 A few things you can expect to find here:
 

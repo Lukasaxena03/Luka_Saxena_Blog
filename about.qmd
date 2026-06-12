@@ -9,9 +9,6 @@ about:
     - icon: linkedin
       text: LinkedIn
       href: https://www.linkedin.com/in/luka-saxena
-    - icon: file-earmark-text
-      text: Resume
-      href: resume.pdf
     - text: ORCiD
       href: https://orcid.org/0009-0004-8474-6383
 toc: false
