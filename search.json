@@ -4,7 +4,7 @@
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "Fun Visualisations I’ve made in R recently\n\n\n\ncode\n\n\n\n\n\n\n\n\n\nJun 13, 2026\n\n\nLuka Saxena\n\n\n\n\n\n\n\n\n\n\n\n\nPRISMA2020 on R\n\n\n\ncode\n\n\n\n\n\n\n\n\n\nJun 12, 2026\n\n\nLuka Saxena\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJun 12, 2026\n\n\nLuka Saxena\n\n\n\n\n\nNo matching items"
+    "text": "Making a Sankey diagram in R\n\n\n\nR\n\ndata visualisation\n\nnetworkD3\n\n\n\nHow I built a Sankey diagram showing which interventions different patient groups receive, using networkD3.\n\n\n\n\n\nSep 21, 2026\n\n\nLuka Saxena\n\n\n\n\n\n\n\n\n\n\n\n\nPRISMA2020 on R\n\n\n\ncode\n\n\n\n\n\n\n\n\n\nJun 12, 2026\n\n\nLuka Saxena\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJun 12, 2026\n\n\nLuka Saxena\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
@@ -39,7 +39,7 @@
     "href": "index.html#recent-posts",
     "title": "Luka Saxena",
     "section": "Recent Posts",
-    "text": "Recent Posts\n\n\n\n\n\n\n\n\nFun Visualisations I’ve made in R recently\n\n\n\n\n\n\nLuka Saxena\n\n\nJun 13, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\nPRISMA2020 on R\n\n\n\n\n\n\nLuka Saxena\n\n\nJun 12, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nLuka Saxena\n\n\nJun 12, 2026\n\n\n\n\n\n\nNo matching items"
+    "text": "Recent Posts\n\n\n\n\n\n\n\n\nMaking a Sankey diagram in R\n\n\nHow I built a Sankey diagram showing which interventions different patient groups receive, using networkD3.\n\n\n\nLuka Saxena\n\n\nSep 21, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\nPRISMA2020 on R\n\n\n\n\n\n\nLuka Saxena\n\n\nJun 12, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nLuka Saxena\n\n\nJun 12, 2026\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/Welcome/index.html",
@@ -72,8 +72,64 @@
   {
     "objectID": "posts/Heat Maps/index.html",
     "href": "posts/Heat Maps/index.html",
-    "title": "Fun Visualisations I’ve made in R recently",
+    "title": "Making a Sankey diagram in R",
     "section": "",
-    "text": "Hey everyone, today I thought I would share"
+    "text": "I work on SEPSIS SUPPORT, a research program at The George Institute looking at care after sepsis. Part of that work involved looking through existing research to compare sepsis survivors with general ICU survivors, and the types of care each group receives.\nI needed one figure that showed, for each patient group, which interventions they received, how those interventions fit into broader categories, and where the evidence came from. Stacked bars couldn’t show all of that at once. A Sankey diagram could: each band links a patient group to an intervention, its width shows how often that happens, and colour carries the extra information.\n\n\n\n\n\n\nImportant\n\n\n\nThe interventions and numbers below are made up for this post. They are not results from any real study."
+  },
+  {
+    "objectID": "posts/Heat Maps/index.html#why-i-needed-one",
+    "href": "posts/Heat Maps/index.html#why-i-needed-one",
+    "title": "Making a Sankey diagram in R",
+    "section": "",
+    "text": "I work on SEPSIS SUPPORT, a research program at The George Institute looking at care after sepsis. Part of that work involved looking through existing research to compare sepsis survivors with general ICU survivors, and the types of care each group receives.\nI needed one figure that showed, for each patient group, which interventions they received, how those interventions fit into broader categories, and where the evidence came from. Stacked bars couldn’t show all of that at once. A Sankey diagram could: each band links a patient group to an intervention, its width shows how often that happens, and colour carries the extra information.\n\n\n\n\n\n\nImportant\n\n\n\nThe interventions and numbers below are made up for this post. They are not results from any real study."
+  },
+  {
+    "objectID": "posts/Heat Maps/index.html#setup",
+    "href": "posts/Heat Maps/index.html#setup",
+    "title": "Making a Sankey diagram in R",
+    "section": "Setup",
+    "text": "Setup\n\nlibrary(tidyverse)\nlibrary(networkD3)\nlibrary(htmltools)"
+  },
+  {
+    "objectID": "posts/Heat Maps/index.html#the-data",
+    "href": "posts/Heat Maps/index.html#the-data",
+    "title": "Making a Sankey diagram in R",
+    "section": "1. The data",
+    "text": "1. The data\nEach row is an intervention, its category, and a count for every combination of patient group and study origin.\n\ninterventions &lt;- tribble(\n  ~intervention,              ~category,                     ~sepsis_aus, ~sepsis_int, ~general_aus, ~general_int,\n  \"Follow-up clinic\",         \"Body Functions & Structures\",  1,           8,           3,            40,\n  \"Psychology review\",        \"Body Functions & Structures\",  1,           6,           2,            35,\n  \"Physiotherapy assessment\", \"Body Functions & Structures\",  0,           5,           2,            30,\n  \"Medication check\",         \"Body Functions & Structures\",  0,           4,           1,            18,\n  \"Exercise program\",         \"Activities & Participation\",   1,           5,           2,            32,\n  \"Education resources\",      \"Activities & Participation\",   1,           7,           2,            28,\n  \"Telehealth check-in\",      \"Contextual Factors\",           0,           3,           3,            25,\n  \"Care coordination\",        \"Contextual Factors\",           1,           4,           2,            22,\n  \"Peer support group\",       \"Contextual Factors\",           0,           2,           1,            12,\n  \"Carer support\",            \"Contextual Factors\",           0,           1,           1,             6,\n  \"Other\",                    \"Other\",                        0,           2,           1,            15\n)\n\nReshape to one row per flow, and drop any zero counts.\n\nflows &lt;- interventions |&gt;\n  pivot_longer(\n    sepsis_aus:general_int,\n    names_to = c(\"patient_group\", \"origin\"),\n    names_sep = \"_\",\n    values_to = \"n\"\n  ) |&gt;\n  filter(n &gt; 0) |&gt;\n  mutate(\n    patient_group = recode(patient_group,\n                           sepsis  = \"Sepsis survivors\",\n                           general = \"General critical illness\"),\n    origin = recode(origin, aus = \"Australian\", int = \"International\")\n  )"
+  },
+  {
+    "objectID": "posts/Heat Maps/index.html#nodes-and-links",
+    "href": "posts/Heat Maps/index.html#nodes-and-links",
+    "title": "Making a Sankey diagram in R",
+    "section": "2. Nodes and links",
+    "text": "2. Nodes and links\nNodes are the two patient groups on the left and the interventions on the right. The “(n=…)” in each label is calculated from the data, so it always matches.\n\ntotals &lt;- flows |&gt; count(intervention, wt = n)\n\nnodes &lt;- bind_rows(\n  tibble(key   = c(\"Sepsis survivors\", \"General critical illness\"),\n         name  = key,\n         group = \"Patient group\"),\n  interventions |&gt;\n    left_join(totals, by = \"intervention\") |&gt;\n    transmute(key   = intervention,\n              name  = paste0(intervention, \" (n=\", n, \")\"),\n              group = category)\n)\n\nlinks &lt;- flows |&gt;\n  mutate(\n    source = match(patient_group, nodes$key) - 1,  # networkD3 counts from 0\n    target = match(intervention,  nodes$key) - 1\n  )"
+  },
+  {
+    "objectID": "posts/Heat Maps/index.html#colours",
+    "href": "posts/Heat Maps/index.html#colours",
+    "title": "Making a Sankey diagram in R",
+    "section": "3. Colours",
+    "text": "3. Colours\nNode colours show the category, and link colours show study origin. I define them once in R and build the D3 colour scale from them, so the plot and legend always agree.\n\nnode_cols &lt;- c(\n  \"Patient group\"               = \"#5B5B5B\",\n  \"Body Functions & Structures\" = \"#3FBFB8\",\n  \"Activities & Participation\"  = \"#FFD54F\",\n  \"Contextual Factors\"          = \"#9A6FB0\",\n  \"Other\"                       = \"#C5DCDC\"\n)\n\norigin_cols &lt;- c(\n  \"Australian\"    = \"#F4A6D7\",\n  \"International\" = \"#A8E4E0\"\n)\n\nall_cols &lt;- c(node_cols, origin_cols)\n\ncolour_scale &lt;- htmlwidgets::JS(sprintf(\n  \"d3.scaleOrdinal().domain(%s).range(%s)\",\n  jsonlite::toJSON(names(all_cols)),\n  jsonlite::toJSON(unname(all_cols))\n))"
+  },
+  {
+    "objectID": "posts/Heat Maps/index.html#draw",
+    "href": "posts/Heat Maps/index.html#draw",
+    "title": "Making a Sankey diagram in R",
+    "section": "4. Draw",
+    "text": "4. Draw\n\nsankey &lt;- sankeyNetwork(\n  Links       = as.data.frame(links),\n  Nodes       = as.data.frame(nodes),\n  Source      = \"source\",\n  Target      = \"target\",\n  Value       = \"n\",\n  NodeID      = \"name\",\n  NodeGroup   = \"group\",\n  LinkGroup   = \"origin\",\n  colourScale = colour_scale,\n  fontSize    = 13,\n  fontFamily  = \"Arial\",\n  nodeWidth   = 28,\n  nodePadding = 10,\n  width       = 1000,\n  height      = 750,\n  sinksRight  = FALSE,\n  iterations  = 0\n)\n\n# networkD3 has no built-in legend, so add one underneath with HTML\nlegend_item &lt;- function(label, colour) {\n  tags$span(\n    style = \"display:inline-flex; align-items:center; margin-right:24px;\",\n    tags$span(style = sprintf(\n      \"width:14px; height:14px; margin-right:6px; background:%s;\", colour\n    )),\n    label\n  )\n}\n\nlegend &lt;- tags$div(\n  style = \"font: 13px Arial; margin-top: 10px;\",\n  tags$b(\"Study origin:\"),\n  tags$div(style = \"margin: 6px 0 12px;\",\n           Map(legend_item, names(origin_cols), origin_cols)),\n  tags$b(\"Node colour (ICF category):\"),\n  tags$div(style = \"margin-top: 6px;\",\n           Map(legend_item, names(node_cols), node_cols))\n)\n\nsankey &lt;- htmlwidgets::appendContent(sankey, legend)\nsankey\n\n\n\nStudy origin:\n\n\n\nAustralian\n\n\n\nInternational\n\n\nNode colour (ICF category):\n\n\n\nPatient group\n\n\n\nBody Functions & Structures\n\n\n\nActivities & Participation\n\n\n\nContextual Factors\n\n\n\nOther"
+  },
+  {
+    "objectID": "posts/Heat Maps/index.html#export",
+    "href": "posts/Heat Maps/index.html#export",
+    "title": "Making a Sankey diagram in R",
+    "section": "5. Export",
+    "text": "5. Export\n\nhtmlwidgets::saveWidget(sankey, \"sankey.html\", selfcontained = TRUE)\n\nwebshot2::webshot(\"sankey.html\", \"sankey.png\",\n                  vwidth = 1100, vheight = 900, zoom = 3)"
+  },
+  {
+    "objectID": "posts/Heat Maps/index.html#tips-and-tricks",
+    "href": "posts/Heat Maps/index.html#tips-and-tricks",
+    "title": "Making a Sankey diagram in R",
+    "section": "Tips and tricks",
+    "text": "Tips and tricks\n\nColour links by a third variable. LinkGroup lets the bands carry extra information (here, study origin) on top of the nodes they connect.\nSplit one flow into several links. Each patient group and intervention pair has one link per origin, which is how you get the thin pink band sitting on top of the teal one.\nLock the order with iterations = 0. Nodes appear in the order you define them, so grouping interventions by category in your data keeps the colours together on the plot.\nCalculate labels from the data. Building “(n=…)” with paste0() means your labels can never disagree with your numbers.\nDrop zero counts. Zero-width links can cause odd gaps, so filter them out first.\nAdd a legend with appendContent(). networkD3 doesn’t draw one, but you can attach any HTML underneath the widget, and it carries through to saveWidget().\nGive it room. Wide Sankeys get squashed in a blog column, so #| column: page lets the plot use the full page width."
   }
 ]

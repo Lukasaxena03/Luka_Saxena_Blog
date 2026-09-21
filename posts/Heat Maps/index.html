@@ -7,9 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Luka Saxena">
-<meta name="dcterms.date" content="2026-06-13">
+<meta name="dcterms.date" content="2026-09-21">
+<meta name="description" content="How I built a Sankey diagram showing which interventions different patient groups receive, using networkD3.">
 
-<title>Fun Visualisations I’ve made in R recently – Luka Saxena</title>
+<title>Making a Sankey diagram in R – Luka Saxena</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -24,6 +25,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -72,6 +108,10 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="../../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="../../site_libs/d3-4.9.1/d3.min.js"></script>
+<script src="../../site_libs/sankey-1/sankey.js"></script>
+<script src="../../site_libs/sankeyNetwork-binding-0.4.1/sankeyNetwork.js"></script>
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -127,9 +167,16 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Fun Visualisations I’ve made in R recently</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">code</div>
+      <h1 class="title">Making a Sankey diagram in R</h1>
+                  <div>
+        <div class="description">
+          How I built a Sankey diagram showing which interventions different patient groups receive, using networkD3.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">data visualisation</div>
+                <div class="quarto-category">networkD3</div>
               </div>
                   </div>
   </div>
@@ -147,7 +194,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">June 13, 2026</p>
+        <p class="date">September 21, 2026</p>
       </div>
     </div>
     
@@ -160,15 +207,236 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
 
 
-<p>Hey everyone, today I thought I would share</p>
+<section id="why-i-needed-one" class="level2">
+<h2 class="anchored" data-anchor-id="why-i-needed-one">Why I needed one</h2>
+<p>I work on SEPSIS SUPPORT, a research program at The George Institute looking at care after sepsis. Part of that work involved looking through existing research to compare sepsis survivors with general ICU survivors, and the types of care each group receives.</p>
+<p>I needed one figure that showed, for each patient group, which interventions they received, how those interventions fit into broader categories, and where the evidence came from. Stacked bars couldn’t show all of that at once. A Sankey diagram could: each band links a patient group to an intervention, its width shows how often that happens, and colour carries the extra information.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The interventions and numbers below are made up for this post. They are not results from any real study.</p>
+</div>
+</div>
+</section>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(networkD3)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(htmltools)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">1. The data</h2>
+<p>Each row is an intervention, its category, and a count for every combination of patient group and study origin.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>interventions <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>intervention,              <span class="sc">~</span>category,                     <span class="sc">~</span>sepsis_aus, <span class="sc">~</span>sepsis_int, <span class="sc">~</span>general_aus, <span class="sc">~</span>general_int,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Follow-up clinic"</span>,         <span class="st">"Body Functions &amp; Structures"</span>,  <span class="dv">1</span>,           <span class="dv">8</span>,           <span class="dv">3</span>,            <span class="dv">40</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Psychology review"</span>,        <span class="st">"Body Functions &amp; Structures"</span>,  <span class="dv">1</span>,           <span class="dv">6</span>,           <span class="dv">2</span>,            <span class="dv">35</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Physiotherapy assessment"</span>, <span class="st">"Body Functions &amp; Structures"</span>,  <span class="dv">0</span>,           <span class="dv">5</span>,           <span class="dv">2</span>,            <span class="dv">30</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Medication check"</span>,         <span class="st">"Body Functions &amp; Structures"</span>,  <span class="dv">0</span>,           <span class="dv">4</span>,           <span class="dv">1</span>,            <span class="dv">18</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Exercise program"</span>,         <span class="st">"Activities &amp; Participation"</span>,   <span class="dv">1</span>,           <span class="dv">5</span>,           <span class="dv">2</span>,            <span class="dv">32</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Education resources"</span>,      <span class="st">"Activities &amp; Participation"</span>,   <span class="dv">1</span>,           <span class="dv">7</span>,           <span class="dv">2</span>,            <span class="dv">28</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Telehealth check-in"</span>,      <span class="st">"Contextual Factors"</span>,           <span class="dv">0</span>,           <span class="dv">3</span>,           <span class="dv">3</span>,            <span class="dv">25</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Care coordination"</span>,        <span class="st">"Contextual Factors"</span>,           <span class="dv">1</span>,           <span class="dv">4</span>,           <span class="dv">2</span>,            <span class="dv">22</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Peer support group"</span>,       <span class="st">"Contextual Factors"</span>,           <span class="dv">0</span>,           <span class="dv">2</span>,           <span class="dv">1</span>,            <span class="dv">12</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Carer support"</span>,            <span class="st">"Contextual Factors"</span>,           <span class="dv">0</span>,           <span class="dv">1</span>,           <span class="dv">1</span>,             <span class="dv">6</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Other"</span>,                    <span class="st">"Other"</span>,                        <span class="dv">0</span>,           <span class="dv">2</span>,           <span class="dv">1</span>,            <span class="dv">15</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Reshape to one row per flow, and drop any zero counts.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>flows <span class="ot">&lt;-</span> interventions <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    sepsis_aus<span class="sc">:</span>general_int,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"patient_group"</span>, <span class="st">"origin"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"n"</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">patient_group =</span> <span class="fu">recode</span>(patient_group,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sepsis  =</span> <span class="st">"Sepsis survivors"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">general =</span> <span class="st">"General critical illness"</span>),</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">origin =</span> <span class="fu">recode</span>(origin, <span class="at">aus =</span> <span class="st">"Australian"</span>, <span class="at">int =</span> <span class="st">"International"</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="nodes-and-links" class="level2">
+<h2 class="anchored" data-anchor-id="nodes-and-links">2. Nodes and links</h2>
+<p>Nodes are the two patient groups on the left and the interventions on the right. The “(n=…)” in each label is calculated from the data, so it always matches.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>totals <span class="ot">&lt;-</span> flows <span class="sc">|&gt;</span> <span class="fu">count</span>(intervention, <span class="at">wt =</span> n)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>nodes <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">key   =</span> <span class="fu">c</span>(<span class="st">"Sepsis survivors"</span>, <span class="st">"General critical illness"</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">name  =</span> key,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">group =</span> <span class="st">"Patient group"</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  interventions <span class="sc">|&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(totals, <span class="at">by =</span> <span class="st">"intervention"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">transmute</span>(<span class="at">key   =</span> intervention,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">name  =</span> <span class="fu">paste0</span>(intervention, <span class="st">" (n="</span>, n, <span class="st">")"</span>),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">group =</span> category)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> flows <span class="sc">|&gt;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">source =</span> <span class="fu">match</span>(patient_group, nodes<span class="sc">$</span>key) <span class="sc">-</span> <span class="dv">1</span>,  <span class="co"># networkD3 counts from 0</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">target =</span> <span class="fu">match</span>(intervention,  nodes<span class="sc">$</span>key) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="colours" class="level2">
+<h2 class="anchored" data-anchor-id="colours">3. Colours</h2>
+<p>Node colours show the category, and link colours show study origin. I define them once in R and build the D3 colour scale from them, so the plot and legend always agree.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>node_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Patient group"</span>               <span class="ot">=</span> <span class="st">"#5B5B5B"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Body Functions &amp; Structures"</span> <span class="ot">=</span> <span class="st">"#3FBFB8"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Activities &amp; Participation"</span>  <span class="ot">=</span> <span class="st">"#FFD54F"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Contextual Factors"</span>          <span class="ot">=</span> <span class="st">"#9A6FB0"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Other"</span>                       <span class="ot">=</span> <span class="st">"#C5DCDC"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>origin_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Australian"</span>    <span class="ot">=</span> <span class="st">"#F4A6D7"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"International"</span> <span class="ot">=</span> <span class="st">"#A8E4E0"</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>all_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(node_cols, origin_cols)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>colour_scale <span class="ot">&lt;-</span> htmlwidgets<span class="sc">::</span><span class="fu">JS</span>(<span class="fu">sprintf</span>(</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"d3.scaleOrdinal().domain(%s).range(%s)"</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  jsonlite<span class="sc">::</span><span class="fu">toJSON</span>(<span class="fu">names</span>(all_cols)),</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  jsonlite<span class="sc">::</span><span class="fu">toJSON</span>(<span class="fu">unname</span>(all_cols))</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="draw" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="draw">4. Draw</h2>
+<div class="cell page-columns page-full">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sankey <span class="ot">&lt;-</span> <span class="fu">sankeyNetwork</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Links       =</span> <span class="fu">as.data.frame</span>(links),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Nodes       =</span> <span class="fu">as.data.frame</span>(nodes),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Source      =</span> <span class="st">"source"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Target      =</span> <span class="st">"target"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Value       =</span> <span class="st">"n"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">NodeID      =</span> <span class="st">"name"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">NodeGroup   =</span> <span class="st">"group"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">LinkGroup   =</span> <span class="st">"origin"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">colourScale =</span> colour_scale,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">fontSize    =</span> <span class="dv">13</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">fontFamily  =</span> <span class="st">"Arial"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodeWidth   =</span> <span class="dv">28</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodePadding =</span> <span class="dv">10</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">width       =</span> <span class="dv">1000</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">height      =</span> <span class="dv">750</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">sinksRight  =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">iterations  =</span> <span class="dv">0</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co"># networkD3 has no built-in legend, so add one underneath with HTML</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>legend_item <span class="ot">&lt;-</span> <span class="cf">function</span>(label, colour) {</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">span</span>(</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">"display:inline-flex; align-items:center; margin-right:24px;"</span>,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    tags<span class="sc">$</span><span class="fu">span</span>(<span class="at">style =</span> <span class="fu">sprintf</span>(</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      <span class="st">"width:14px; height:14px; margin-right:6px; background:%s;"</span>, colour</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    )),</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    label</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>legend <span class="ot">&lt;-</span> tags<span class="sc">$</span><span class="fu">div</span>(</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">style =</span> <span class="st">"font: 13px Arial; margin-top: 10px;"</span>,</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">b</span>(<span class="st">"Study origin:"</span>),</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">div</span>(<span class="at">style =</span> <span class="st">"margin: 6px 0 12px;"</span>,</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>           <span class="fu">Map</span>(legend_item, <span class="fu">names</span>(origin_cols), origin_cols)),</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">b</span>(<span class="st">"Node colour (ICF category):"</span>),</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">div</span>(<span class="at">style =</span> <span class="st">"margin-top: 6px;"</span>,</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>           <span class="fu">Map</span>(legend_item, <span class="fu">names</span>(node_cols), node_cols))</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>sankey <span class="ot">&lt;-</span> htmlwidgets<span class="sc">::</span><span class="fu">appendContent</span>(sankey, legend)</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>sankey</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display column-page">
+<div id="htmlwidget-80e2b9dff00f098a4b97" style="width:100%;height:487px;" class="sankeyNetwork html-widget"></div>
+<div style="font: 13px Arial; margin-top: 10px;">
+<b>Study origin:</b>
+<div style="margin: 6px 0 12px;">
+<span style="display:inline-flex; align-items:center; margin-right:24px;">
+<span style="width:14px; height:14px; margin-right:6px; background:#F4A6D7;"></span>
+Australian
+</span>
+<span style="display:inline-flex; align-items:center; margin-right:24px;">
+<span style="width:14px; height:14px; margin-right:6px; background:#A8E4E0;"></span>
+International
+</span>
+</div>
+<b>Node colour (ICF category):</b>
+<div style="margin-top: 6px;">
+<span style="display:inline-flex; align-items:center; margin-right:24px;">
+<span style="width:14px; height:14px; margin-right:6px; background:#5B5B5B;"></span>
+Patient group
+</span>
+<span style="display:inline-flex; align-items:center; margin-right:24px;">
+<span style="width:14px; height:14px; margin-right:6px; background:#3FBFB8;"></span>
+Body Functions &amp; Structures
+</span>
+<span style="display:inline-flex; align-items:center; margin-right:24px;">
+<span style="width:14px; height:14px; margin-right:6px; background:#FFD54F;"></span>
+Activities &amp; Participation
+</span>
+<span style="display:inline-flex; align-items:center; margin-right:24px;">
+<span style="width:14px; height:14px; margin-right:6px; background:#9A6FB0;"></span>
+Contextual Factors
+</span>
+<span style="display:inline-flex; align-items:center; margin-right:24px;">
+<span style="width:14px; height:14px; margin-right:6px; background:#C5DCDC;"></span>
+Other
+</span>
+</div>
+</div>
+<script type="application/json" data-for="htmlwidget-80e2b9dff00f098a4b97">{"x":{"links":{"source":[0,0,1,1,0,0,1,1,0,1,1,0,1,1,0,0,1,1,0,0,1,1,0,1,1,0,0,1,1,0,1,1,0,1,1,0,1,1],"target":[2,2,2,2,3,3,3,3,4,4,4,5,5,5,6,6,6,6,7,7,7,7,8,8,8,9,9,9,9,10,10,10,11,11,11,12,12,12],"value":[1,8,3,40,1,6,2,35,5,2,30,4,1,18,1,5,2,32,1,7,2,28,3,3,25,1,4,2,22,2,1,12,1,1,6,2,1,15],"group":["Australian","International","Australian","International","Australian","International","Australian","International","International","Australian","International","International","Australian","International","Australian","International","Australian","International","Australian","International","Australian","International","International","Australian","International","Australian","International","Australian","International","International","Australian","International","International","Australian","International","International","Australian","International"]},"nodes":{"name":["Sepsis survivors","General critical illness","Follow-up clinic (n=52)","Psychology review (n=44)","Physiotherapy assessment (n=37)","Medication check (n=23)","Exercise program (n=40)","Education resources (n=38)","Telehealth check-in (n=31)","Care coordination (n=29)","Peer support group (n=15)","Carer support (n=8)","Other (n=18)"],"group":["Patient group","Patient group","Body Functions & Structures","Body Functions & Structures","Body Functions & Structures","Body Functions & Structures","Activities & Participation","Activities & Participation","Contextual Factors","Contextual Factors","Contextual Factors","Contextual Factors","Other"]},"options":{"NodeID":"name","NodeGroup":"group","LinkGroup":"origin","colourScale":"d3.scaleOrdinal().domain([\"Patient group\",\"Body Functions & Structures\",\"Activities & Participation\",\"Contextual Factors\",\"Other\",\"Australian\",\"International\"]).range([\"#5B5B5B\",\"#3FBFB8\",\"#FFD54F\",\"#9A6FB0\",\"#C5DCDC\",\"#F4A6D7\",\"#A8E4E0\"])","fontSize":13,"fontFamily":"Arial","nodeWidth":28,"nodePadding":10,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":0,"sinksRight":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="export" class="level2">
+<h2 class="anchored" data-anchor-id="export">5. Export</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>htmlwidgets<span class="sc">::</span><span class="fu">saveWidget</span>(sankey, <span class="st">"sankey.html"</span>, <span class="at">selfcontained =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>webshot2<span class="sc">::</span><span class="fu">webshot</span>(<span class="st">"sankey.html"</span>, <span class="st">"sankey.png"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">vwidth =</span> <span class="dv">1100</span>, <span class="at">vheight =</span> <span class="dv">900</span>, <span class="at">zoom =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="tips-and-tricks" class="level2">
+<h2 class="anchored" data-anchor-id="tips-and-tricks">Tips and tricks</h2>
+<ul>
+<li><strong>Colour links by a third variable.</strong> <code>LinkGroup</code> lets the bands carry extra information (here, study origin) on top of the nodes they connect.</li>
+<li><strong>Split one flow into several links.</strong> Each patient group and intervention pair has one link per origin, which is how you get the thin pink band sitting on top of the teal one.</li>
+<li><strong>Lock the order with <code>iterations = 0</code>.</strong> Nodes appear in the order you define them, so grouping interventions by category in your data keeps the colours together on the plot.</li>
+<li><strong>Calculate labels from the data.</strong> Building “(n=…)” with <code>paste0()</code> means your labels can never disagree with your numbers.</li>
+<li><strong>Drop zero counts.</strong> Zero-width links can cause odd gaps, so filter them out first.</li>
+<li><strong>Add a legend with <code>appendContent()</code>.</strong> networkD3 doesn’t draw one, but you can attach any HTML underneath the widget, and it carries through to <code>saveWidget()</code>.</li>
+<li><strong>Give it room.</strong> Wide Sankeys get squashed in a blog column, so <code>#| column: page</code> lets the plot use the full page width.</li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
