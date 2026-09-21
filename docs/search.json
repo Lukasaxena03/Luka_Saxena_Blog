@@ -4,21 +4,21 @@
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "PRISMA2020 on R\n\n\n\ncode\n\n\n\n\n\n\n\n\n\nJun 12, 2026\n\n\nLuka Saxena\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJun 12, 2026\n\n\nLuka Saxena\n\n\n\n\n\nNo matching items"
+    "text": "Fun Visualisations I’ve made in R recently\n\n\n\ncode\n\n\n\n\n\n\n\n\n\nJun 13, 2026\n\n\nLuka Saxena\n\n\n\n\n\n\n\n\n\n\n\n\nPRISMA2020 on R\n\n\n\ncode\n\n\n\n\n\n\n\n\n\nJun 12, 2026\n\n\nLuka Saxena\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJun 12, 2026\n\n\nLuka Saxena\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Luka Saxena",
     "section": "",
-    "text": "Health Data Science · Research Assistant · UNSW MSc Candidate\nResearch Assistant at The George Institute for Global Health and MSc candidate in Health Data Science at UNSW. I work at the intersection of clinical research and data science – building the tools, analyses, and visualisations that move research forward."
+    "text": "Health Data Science · Research Associate · UNSW MSc Candidate\nResearch Associate at The George Institute for Global Health and MSc candidate in Health Data Science at UNSW. I work at the intersection of clinical research and data science – building the tools, analyses, and visualisations that move research forward."
   },
   {
     "objectID": "index.html#luka-saxena",
     "href": "index.html#luka-saxena",
     "title": "Luka Saxena",
     "section": "",
-    "text": "Health Data Science · Research Assistant · UNSW MSc Candidate\nResearch Assistant at The George Institute for Global Health and MSc candidate in Health Data Science at UNSW. I work at the intersection of clinical research and data science – building the tools, analyses, and visualisations that move research forward."
+    "text": "Health Data Science · Research Associate · UNSW MSc Candidate\nResearch Associate at The George Institute for Global Health and MSc candidate in Health Data Science at UNSW. I work at the intersection of clinical research and data science – building the tools, analyses, and visualisations that move research forward."
   },
   {
     "objectID": "index.html#current-role",
@@ -39,7 +39,7 @@
     "href": "index.html#recent-posts",
     "title": "Luka Saxena",
     "section": "Recent Posts",
-    "text": "Recent Posts\n\n\n\n\n\n\n\n\n\n\nPRISMA2020 on R\n\n\n\n\n\n\nLuka Saxena\n\n\nJun 12, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nLuka Saxena\n\n\nJun 12, 2026\n\n\n\n\n\n\nNo matching items"
+    "text": "Recent Posts\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/PRISMA/index.html",
@@ -68,5 +68,12 @@
     "title": "Welcome To My Blog",
     "section": "",
     "text": "Hi, I’m Luka. Thanks for stopping by. This is a small corner of the internet where I plan to think out loud about working with data. I’ve started it for a simple reason: I’m learning a lot right now, and I wanted somewhere to keep track of it all, share the good bits, and look back later on how far I’ve come.\nBy day I work in health and medical research, and on the side I’m studying health data science. This blog is where I’ll share my journey as it actually unfolds: the things I’m learning, the problems I get stuck on, and the small wins that make everything click into place.\nA few things you can expect to find here:\n\nNotes from my growth as a data scientist, and how I’m getting there\nFun data tips, tricks, and shortcuts I wish I’d known sooner\nVisualisations and experiments, the prettier side of working with data\nHonest reflections on finding my way in this field and building a career in it\n\nI’m also writing this partly for myself. Think of it as a personal repository for the cool things I pick up along the way, the kind of stuff that’s too good to forget but too easily lost in a tangle of bookmarks and half-remembered tutorials. If it ends up helping you too, even better. So have a look around. A lot of this is still a work in progress, and that’s exactly the point. Come back now and then to see what’s new.\nThanks for reading,\nLuka"
+  },
+  {
+    "objectID": "posts/Heat Maps/index.html",
+    "href": "posts/Heat Maps/index.html",
+    "title": "Fun Visualisations I’ve made in R recently",
+    "section": "",
+    "text": "Hey everyone, today I thought I would share"
   }
 ]

@@ -19,9 +19,9 @@ listing:
 ::: {.g-col-12 .g-col-md-8 style="padding-top: 2em; text-align: justify;"}
 ## Luka Saxena
 
-**Health Data Science · Research Assistant · UNSW MSc Candidate**
+**Health Data Science · Research Associate · UNSW MSc Candidate**
 
-Research Assistant at The George Institute for Global Health and MSc candidate in Health Data Science at UNSW. I work at the intersection of clinical research and data science -- building the tools, analyses, and visualisations that move research forward.
+Research Associate at The George Institute for Global Health and MSc candidate in Health Data Science at UNSW. I work at the intersection of clinical research and data science -- building the tools, analyses, and visualisations that move research forward.
 :::
 :::::
 ::::::

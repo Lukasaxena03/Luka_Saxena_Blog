@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://lukasaxena03.github.io/Luka_Saxena_Blog/blog.html</loc>
-    <lastmod>2026-06-12T09:21:28.094Z</lastmod>
+    <lastmod>2026-09-21T07:34:21.909Z</lastmod>
   </url>
   <url>
     <loc>https://lukasaxena03.github.io/Luka_Saxena_Blog/index.html</loc>
-    <lastmod>2026-06-12T09:21:28.537Z</lastmod>
+    <lastmod>2026-09-21T07:34:14.593Z</lastmod>
   </url>
   <url>
     <loc>https://lukasaxena03.github.io/Luka_Saxena_Blog/posts/PRISMA/index.html</loc>
@@ -19,5 +19,9 @@
   <url>
     <loc>https://lukasaxena03.github.io/Luka_Saxena_Blog/about.html</loc>
     <lastmod>2026-06-12T10:41:20.868Z</lastmod>
+  </url>
+  <url>
+    <loc>https://lukasaxena03.github.io/Luka_Saxena_Blog/posts/Heat Maps/index.html</loc>
+    <lastmod>2026-06-13T08:27:01.000Z</lastmod>
   </url>
 </urlset>
