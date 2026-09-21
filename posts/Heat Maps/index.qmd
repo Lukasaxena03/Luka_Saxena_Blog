@@ -1,8 +1,199 @@
 ---
-title: "Fun Visualisations I've made in R recently"
+title: "Making a Sankey diagram in R"
 author: "Luka Saxena"
-date: "2026-06-13"
-categories: [code]
+date: "2026-09-21"
+categories: [R, data visualisation, networkD3]
+description: "How I built a Sankey diagram showing which interventions different patient groups receive, using networkD3."
+execute:
+  warning: false
+  message: false
 ---
 
-Hey everyone, today I thought I would share 
+## Why I needed one
+
+I work on SEPSIS SUPPORT, a research program at The George Institute looking at care after sepsis. Part of that work involved looking through existing research to compare sepsis survivors with general ICU survivors, and the types of care each group receives.
+
+I needed one figure that showed, for each patient group, which interventions they received, how those interventions fit into broader categories, and where the evidence came from. Stacked bars couldn't show all of that at once. A Sankey diagram could: each band links a patient group to an intervention, its width shows how often that happens, and colour carries the extra information.
+
+::: {.callout-important}
+The interventions and numbers below are made up for this post. They are not results from any real study.
+:::
+
+## Setup
+
+```{r}
+library(tidyverse)
+library(networkD3)
+library(htmltools)
+```
+
+## 1. The data
+
+Each row is an intervention, its category, and a count for every combination of patient group and study origin.
+
+```{r}
+interventions <- tribble(
+  ~intervention,              ~category,                     ~sepsis_aus, ~sepsis_int, ~general_aus, ~general_int,
+  "Follow-up clinic",         "Body Functions & Structures",  1,           8,           3,            40,
+  "Psychology review",        "Body Functions & Structures",  1,           6,           2,            35,
+  "Physiotherapy assessment", "Body Functions & Structures",  0,           5,           2,            30,
+  "Medication check",         "Body Functions & Structures",  0,           4,           1,            18,
+  "Exercise program",         "Activities & Participation",   1,           5,           2,            32,
+  "Education resources",      "Activities & Participation",   1,           7,           2,            28,
+  "Telehealth check-in",      "Contextual Factors",           0,           3,           3,            25,
+  "Care coordination",        "Contextual Factors",           1,           4,           2,            22,
+  "Peer support group",       "Contextual Factors",           0,           2,           1,            12,
+  "Carer support",            "Contextual Factors",           0,           1,           1,             6,
+  "Other",                    "Other",                        0,           2,           1,            15
+)
+```
+
+Reshape to one row per flow, and drop any zero counts.
+
+```{r}
+flows <- interventions |>
+  pivot_longer(
+    sepsis_aus:general_int,
+    names_to = c("patient_group", "origin"),
+    names_sep = "_",
+    values_to = "n"
+  ) |>
+  filter(n > 0) |>
+  mutate(
+    patient_group = recode(patient_group,
+                           sepsis  = "Sepsis survivors",
+                           general = "General critical illness"),
+    origin = recode(origin, aus = "Australian", int = "International")
+  )
+```
+
+## 2. Nodes and links
+
+Nodes are the two patient groups on the left and the interventions on the right. The "(n=...)" in each label is calculated from the data, so it always matches.
+
+```{r}
+totals <- flows |> count(intervention, wt = n)
+
+nodes <- bind_rows(
+  tibble(key   = c("Sepsis survivors", "General critical illness"),
+         name  = key,
+         group = "Patient group"),
+  interventions |>
+    left_join(totals, by = "intervention") |>
+    transmute(key   = intervention,
+              name  = paste0(intervention, " (n=", n, ")"),
+              group = category)
+)
+
+links <- flows |>
+  mutate(
+    source = match(patient_group, nodes$key) - 1,  # networkD3 counts from 0
+    target = match(intervention,  nodes$key) - 1
+  )
+```
+
+## 3. Colours
+
+Node colours show the category, and link colours show study origin. I define them once in R and build the D3 colour scale from them, so the plot and legend always agree.
+
+```{r}
+node_cols <- c(
+  "Patient group"               = "#5B5B5B",
+  "Body Functions & Structures" = "#3FBFB8",
+  "Activities & Participation"  = "#FFD54F",
+  "Contextual Factors"          = "#9A6FB0",
+  "Other"                       = "#C5DCDC"
+)
+
+origin_cols <- c(
+  "Australian"    = "#F4A6D7",
+  "International" = "#A8E4E0"
+)
+
+all_cols <- c(node_cols, origin_cols)
+
+colour_scale <- htmlwidgets::JS(sprintf(
+  "d3.scaleOrdinal().domain(%s).range(%s)",
+  jsonlite::toJSON(names(all_cols)),
+  jsonlite::toJSON(unname(all_cols))
+))
+```
+
+## 4. Draw
+
+```{r}
+#| column: page
+sankey <- sankeyNetwork(
+  Links       = as.data.frame(links),
+  Nodes       = as.data.frame(nodes),
+  Source      = "source",
+  Target      = "target",
+  Value       = "n",
+  NodeID      = "name",
+  NodeGroup   = "group",
+  LinkGroup   = "origin",
+  colourScale = colour_scale,
+  fontSize    = 13,
+  fontFamily  = "Arial",
+  nodeWidth   = 28,
+  nodePadding = 10,
+  width       = 1000,
+  height      = 750,
+  sinksRight  = FALSE,
+  iterations  = 0
+)
+
+# White labels so they show up on a dark background
+sankey <- htmlwidgets::prependContent(
+  sankey,
+  tags$style(".node text { fill: #fff !important; }")
+)
+
+# networkD3 has no built-in legend, so build one with HTML
+legend_item <- function(label, colour) {
+  tags$span(
+    style = "display:inline-flex; align-items:center; margin-right:24px;",
+    tags$span(style = sprintf(
+      "width:14px; height:14px; margin-right:6px; background:%s;", colour
+    )),
+    label
+  )
+}
+
+legend <- tags$div(
+  style = "font: 13px Arial; color: #fff; margin-top: 10px;",
+  tags$b("Study origin:"),
+  tags$div(style = "margin: 6px 0 12px;",
+           Map(legend_item, names(origin_cols), origin_cols)),
+  tags$b("Node colour (ICF category):"),
+  tags$div(style = "margin-top: 6px;",
+           Map(legend_item, names(node_cols), node_cols))
+)
+
+sankey <- htmlwidgets::appendContent(sankey, legend)
+sankey
+```
+
+## 5. Export
+
+Because the text is white, save with a black background so it's still visible in the exported files.
+
+```{r}
+#| eval: false
+htmlwidgets::saveWidget(sankey, "sankey.html",
+                        selfcontained = TRUE, background = "black")
+
+webshot2::webshot("sankey.html", "sankey.png",
+                  vwidth = 1100, vheight = 950, zoom = 3)
+```
+
+## Tips and tricks
+
+- **Colour links by a third variable.** `LinkGroup` lets the bands carry extra information (here, study origin) on top of the nodes they connect.
+- **Split one flow into several links.** Each patient group and intervention pair has one link per origin, which is how you get the thin pink band sitting on top of the teal one.
+- **Lock the order with `iterations = 0`.** Nodes appear in the order you define them, so grouping interventions by category in your data keeps the colours together on the plot.
+- **Calculate labels from the data.** Building "(n=...)" with `paste0()` means your labels can never disagree with your numbers.
+- **Drop zero counts.** Zero-width links can cause odd gaps, so filter them out first.
+- **Add a legend with `appendContent()`.** networkD3 doesn't draw one, but you can attach any HTML underneath the widget.
+- **Match your site's theme.** A one-line CSS rule on `.node text` changes the label colour, which is handy on dark blogs.
+- **Give it room.** Wide Sankeys get squashed in a blog column, so `#| column: page` lets the plot use the full page width.

@@ -9,6 +9,10 @@
   },
   {
     "listing": "/index.html",
-    "items": []
+    "items": [
+      "/posts/Heat Maps/index.html",
+      "/posts/PRISMA/index.html",
+      "/posts/Welcome/index.html"
+    ]
   }
 ]
