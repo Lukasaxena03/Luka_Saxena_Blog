@@ -4,6 +4,7 @@ author: "Luka Saxena"
 date: "2026-09-21"
 categories: [R, data visualisation, networkD3]
 description: "How I built a Sankey diagram showing which interventions different patient groups receive, using networkD3."
+image: "thumbnail.png"
 execute:
   warning: false
   message: false
