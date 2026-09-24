@@ -121,6 +121,17 @@ colour_scale <- htmlwidgets::JS(sprintf(
 
 ## 4. Draw
 
+```{css}
+#| echo: false
+/* White Sankey labels for a dark background. This goes straight into the
+   page's stylesheet, so it applies no matter when the widget is drawn. */
+.sankeyNetwork svg .node text,
+.sankeyNetwork svg text {
+  fill: #ffffff !important;
+  text-shadow: none !important;
+}
+```
+
 ```{r}
 #| column: page
 sankey <- sankeyNetwork(
@@ -143,10 +154,18 @@ sankey <- sankeyNetwork(
   iterations  = 0
 )
 
-# White labels so they show up on a dark background
-sankey <- htmlwidgets::prependContent(
+# White labels so they show up on a dark background.
+# onRender runs after networkD3 has drawn the plot, so the colour is set
+# directly on each label and can't be overridden by the widget's own styles.
+sankey <- htmlwidgets::onRender(
   sankey,
-  tags$style(".node text { fill: #fff !important; }")
+  '
+  function(el) {
+    d3.select(el).selectAll(".node text")
+      .style("fill", "#fff")
+      .style("text-shadow", "none");
+  }
+  '
 )
 
 # networkD3 has no built-in legend, so build one with HTML
@@ -195,5 +214,5 @@ webshot2::webshot("sankey.html", "sankey.png",
 - **Calculate labels from the data.** Building "(n=...)" with `paste0()` means your labels can never disagree with your numbers.
 - **Drop zero counts.** Zero-width links can cause odd gaps, so filter them out first.
 - **Add a legend with `appendContent()`.** networkD3 doesn't draw one, but you can attach any HTML underneath the widget.
-- **Match your site's theme.** A one-line CSS rule on `.node text` changes the label colour, which is handy on dark blogs.
+- **Match your site's theme.** A few lines of JavaScript in `htmlwidgets::onRender()` recolour the `.node text` labels after the plot is drawn, which is handy on dark blogs.
 - **Give it room.** Wide Sankeys get squashed in a blog column, so `#| column: page` lets the plot use the full page width.

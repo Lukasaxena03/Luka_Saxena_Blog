@@ -1,16 +1,12 @@
 [
   {
     "listing": "/blog.html",
-    "items": [
-      "/posts/Heat Maps/index.html",
-      "/posts/PRISMA/index.html",
-      "/posts/Welcome/index.html"
-    ]
+    "items": []
   },
   {
     "listing": "/index.html",
     "items": [
-      "/posts/Heat Maps/index.html",
+      "/posts/Sankey/index.html",
       "/posts/PRISMA/index.html",
       "/posts/Welcome/index.html"
     ]
