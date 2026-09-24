@@ -1,6 +1,5 @@
 project:
   type: website
-  output-dir: docs
 
 website:
   description: "Welcome to my website!"
